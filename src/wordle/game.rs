@@ -52,7 +52,7 @@ impl Into<String> for Guess {
         // second iteration - color letters in wrong position
         for (i, c) in guess_chars.iter().enumerate() {
             if let Some(index) = word_chars.iter().position(|x| x == c) {
-                if word_chars[i] == '_' {
+                if word_chars[index] == '_' || word_chars[index] == guess_chars[index] {
                     continue;
                 }
                 result[i] = c.to_string().bold().on_yellow().to_string();
