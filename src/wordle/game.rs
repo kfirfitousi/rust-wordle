@@ -9,10 +9,12 @@ pub struct Guess {
 
 impl Guess {
     pub fn new(guess: &str, word: &'static str) -> Result<Self, &'static str> {
-        if guess.len() != 5 {
-            Err("Guess must be 5 characters long")
+        if word.len() != 5 {
+            Err("Word must be 5 characters long.")
+        } else if guess.len() != 5 {
+            Err("Guess must be 5 characters long.")
         } else if !is_valid_guess(guess) {
-            Err("Invalid guess")
+            Err("Invalid guess.")
         } else {
             Ok(Self {
                 guess: String::from(guess),
@@ -33,21 +35,31 @@ impl Guess {
 
 impl Into<String> for Guess {
     fn into(self) -> String {
-        let mut result = String::new();
-        let mut word = String::from(self.word);
+        let mut result = vec![String::new(); 5];
+        let mut word_chars = self.word.chars().collect::<Vec<char>>();
+        let guess_chars = self.guess.chars().collect::<Vec<char>>();
 
-        for (i, c) in self.guess.chars().enumerate() {
-            if c == word.chars().nth(i).unwrap() {
-                result.push_str(&c.to_string().on_bright_green().to_string());
-            } else if word.chars().any(|x| x == c) {
-                result.push_str(&c.to_string().black().on_yellow().to_string());
+        // first iteration - color correctly positioned letters
+        for (i, c) in guess_chars.iter().enumerate() {
+            if c == &word_chars[i] {
+                result[i] = c.to_string().bold().on_bright_green().to_string();
+                word_chars[i] = '_';
             } else {
-                result.push_str(&c.to_string());
+                result[i] = c.to_string().bold().to_string();
             }
-            // This is kinda ugly
-            word = word.replacen(c, "_", 1);
         }
 
-        result
+        // second iteration - color letters in wrong position
+        for (i, c) in guess_chars.iter().enumerate() {
+            if let Some(index) = word_chars.iter().position(|x| x == c) {
+                if word_chars[i] == '_' {
+                    continue;
+                }
+                result[i] = c.to_string().bold().on_yellow().to_string();
+                word_chars[index] = '_';
+            }
+        }
+
+        result.concat()
     }
 }

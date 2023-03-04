@@ -5,14 +5,14 @@ use wordle::game::Guess;
 use wordle::words::gen_random_word;
 
 fn main() {
-    println!("Wordle in Rust");
+    println!("{}", "Wordle in Rust".bright_white().bold());
 
     let word = gen_random_word();
 
     let mut tries = 1u32;
 
     loop {
-        println!("Enter a guess: ");
+        println!("{}", "Enter a guess: ".bright_white());
 
         let mut guess = String::with_capacity(5);
 
@@ -26,7 +26,7 @@ fn main() {
         let guess = match Guess::new(guess.trim(), word) {
             Ok(guess) => guess,
             Err(e) => {
-                println!("{}", e.black().on_yellow());
+                print!("{} ", e.bright_red());
                 continue;
             }
         };
@@ -36,11 +36,12 @@ fn main() {
         if guess.is_correct() {
             println!(
                 "{} {} {}",
-                "You won after".bright_green(),
-                tries.to_string().bright_green(),
+                "You won after".bright_green().bold(),
+                tries.to_string().bright_green().bold(),
                 if tries == 1 { "guess!" } else { "guesses!" }
                     .to_string()
                     .bright_green()
+                    .bold()
             );
             break;
         }
