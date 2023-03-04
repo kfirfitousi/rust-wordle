@@ -20,7 +20,7 @@ fn main() {
             .read_line(&mut guess)
             .expect("Failed to read line");
 
-        // delete 2 previous lines
+        // delete input line
         print!("\x1b[1A\x1b[2K\x1b[1A\x1b[2K");
 
         let guess = match Guess::new(guess.trim(), word) {

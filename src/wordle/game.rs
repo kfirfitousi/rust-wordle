@@ -51,12 +51,15 @@ impl Into<String> for Guess {
 
         // second iteration - color letters in wrong position
         for (i, c) in guess_chars.iter().enumerate() {
+            if word_chars[i] == '_' {
+                continue;
+            }
             if let Some(index) = word_chars.iter().position(|x| x == c) {
-                if word_chars[index] == '_' || word_chars[index] == guess_chars[index] {
+                if word_chars[index] == '*' {
                     continue;
                 }
                 result[i] = c.to_string().bold().on_yellow().to_string();
-                word_chars[index] = '_';
+                word_chars[index] = '*';
             }
         }
 
