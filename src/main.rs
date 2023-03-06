@@ -1,24 +1,24 @@
-pub mod wordle;
+mod wordle;
+mod words;
 
-use colored::Colorize;
-use wordle::game::Guess;
-use wordle::words::gen_random_word;
+use std::env::args;
+use wordle::Wordle;
 
 fn main() {
-    println!("{}", "Wordle in Rust".bright_white().bold());
+    let max_tries = if args().nth(1).unwrap_or_default().eq("--easy") {
+        u32::MAX
+    } else {
+        6
+    };
 
-    let word = gen_random_word();
+    let mut wordle = Wordle::new(max_tries);
 
-    let mut tries = 0;
-
-    let infinite_tries = std::env::args()
-        .nth(1)
-        .eq(&Some(String::from("--infinite-tries")));
+    wordle.print_welcome();
 
     loop {
-        println!("{}", "Enter a guess: ".bright_white());
+        wordle.print_prompt();
 
-        let mut guess = String::with_capacity(5);
+        let mut guess = String::new();
 
         std::io::stdin()
             .read_line(&mut guess)
@@ -27,36 +27,20 @@ fn main() {
         // delete input line
         print!("\x1b[1A\x1b[2K\x1b[1A\x1b[2K");
 
-        let guess = match Guess::new(guess.trim(), word) {
+        let guess = match wordle.make_guess(guess.trim()) {
             Ok(guess) => guess,
-            Err(e) => {
-                print!("{} ", e.bright_red());
-                continue;
-            }
+            Err(_) => continue,
         };
 
-        tries += 1;
         guess.print();
 
         if guess.is_correct() {
-            println!(
-                "{} {} {}",
-                "You won after".bright_green().bold(),
-                tries.to_string().bright_green().bold(),
-                if tries == 1 { "guess!" } else { "guesses!" }
-                    .to_string()
-                    .bright_green()
-                    .bold()
-            );
+            wordle.print_win();
             break;
         }
 
-        if !infinite_tries && tries == 6 {
-            println!(
-                "{} {}",
-                "You lost! The word was".bright_red().bold(),
-                word.bold()
-            );
+        if wordle.is_game_over() {
+            wordle.print_game_over();
             break;
         }
     }
