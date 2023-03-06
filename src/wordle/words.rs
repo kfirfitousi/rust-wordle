@@ -1,10 +1,12 @@
 use rand::Rng;
 
+/// Returns a random word from the Wordle dictionary.
 pub fn gen_random_word() -> &'static str {
     let index = rand::thread_rng().gen_range(0..WORDS.len());
     WORDS[index]
 }
 
+/// Returns true if the guess is a valid word.
 pub fn is_valid_guess(guess: &str) -> bool {
     VALID_GUESSES.contains(&guess)
 }

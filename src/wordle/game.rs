@@ -8,6 +8,8 @@ pub struct Guess {
 }
 
 impl Guess {
+    /// Creates a new guess.
+    /// Returns an error if the guess or the word is invalid.
     pub fn new(guess: &str, word: &'static str) -> Result<Self, &'static str> {
         if word.len() != 5 {
             Err("Word must be 5 characters long.")
@@ -23,11 +25,14 @@ impl Guess {
         }
     }
 
+    /// Prints the guess with colored letters.    
+    /// Correctly positioned letters are green, letters in wrong position are yellow.
     pub fn print(&self) {
         let guess: String = self.clone().into();
         println!("{}", guess);
     }
 
+    /// Returns true if the guess is correct.
     pub fn is_correct(&self) -> bool {
         self.guess.eq(self.word)
     }

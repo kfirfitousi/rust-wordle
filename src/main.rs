@@ -9,7 +9,11 @@ fn main() {
 
     let word = gen_random_word();
 
-    let mut tries = 1u32;
+    let mut tries = 0;
+
+    let infinite_tries = std::env::args()
+        .nth(1)
+        .eq(&Some(String::from("--infinite-tries")));
 
     loop {
         println!("{}", "Enter a guess: ".bright_white());
@@ -31,6 +35,7 @@ fn main() {
             }
         };
 
+        tries += 1;
         guess.print();
 
         if guess.is_correct() {
@@ -46,6 +51,13 @@ fn main() {
             break;
         }
 
-        tries += 1;
+        if !infinite_tries && tries == 6 {
+            println!(
+                "{} {}",
+                "You lost! The word was".bright_red().bold(),
+                word.bold()
+            );
+            break;
+        }
     }
 }
